@@ -1,0 +1,51 @@
+[*]
+[*] GTKWave Analyzer v3.3.125 (w)1999-2025 BSI
+[*] Thu May 28 16:30:49 2026
+[*]
+[dumpfile] "/home/iamericmin/Desktop/Min Works/chipdesign/sr/dump.vcd"
+[dumpfile_mtime] "Thu May 28 16:30:46 2026"
+[dumpfile_size] 2605
+[savefile] "/home/iamericmin/Desktop/Min Works/chipdesign/sr/waves.gtkw"
+[timestart] 0
+[size] 1920 1052
+[pos] -27 -24
+*-16.200001 33100 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[treeopen] sr_tb.
+[treeopen] sr_tb.test_sr.
+[sst_width] 332
+[signals_width] 130
+[sst_expanded] 1
+[sst_vpaned_height] 314
+@420
+sr_tb.dut.BITS
+@28
+sr_tb.dut.clk
+sr_tb.dut.en
+@29
+sr_tb.dut.int_reg[7:0]
+@800028
+sr_tb.dut.mode[1:0]
+@28
+(0)sr_tb.dut.mode[1:0]
+(1)sr_tb.dut.mode[1:0]
+@1001200
+-group_end
+@22
+sr_tb.dut.n_pout[7:0]
+@28
+sr_tb.dut.n_rst
+@800028
+sr_tb.dut.pin[7:0]
+@1001200
+-group_end
+@800028
+sr_tb.dut.pout[7:0]
+@28
+[color] 3
+(7)sr_tb.dut.pout[7:0]
+@1001200
+-group_end
+@28
+sr_tb.dut.update
+[pattern_trace] 1
+[pattern_trace] 0

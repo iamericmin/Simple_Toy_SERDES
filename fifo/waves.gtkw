@@ -1,0 +1,54 @@
+[*]
+[*] GTKWave Analyzer v3.3.125 (w)1999-2025 BSI
+[*] Thu May 28 19:47:38 2026
+[*]
+[dumpfile] "/home/iamericmin/Desktop/Min Works/chipdesign/fifo/dump.vcd"
+[dumpfile_mtime] "Thu May 28 19:47:08 2026"
+[dumpfile_size] 11515
+[savefile] "/home/iamericmin/Desktop/Min Works/chipdesign/fifo/waves.gtkw"
+[timestart] 803000
+[size] 1920 1052
+[pos] -27 -24
+*-15.900000 1155200 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[treeopen] tb_fifo.
+[treeopen] tb_fifo.dut.
+[sst_width] 332
+[signals_width] 235
+[sst_expanded] 1
+[sst_vpaned_height] 314
+@420
+tb_fifo.dut.DEPTH
+tb_fifo.dut.WIDTH
+@28
+[color] 1
+tb_fifo.dut.n_rst
+@420
+tb_fifo.dut.$ivl_for_loop0.i
+@28
+tb_fifo.dut.clk
+tb_fifo.dut.ren
+tb_fifo.dut.wen
+@24
+tb_fifo.dut.count[2:0]
+@22
+[color] 2
+tb_fifo.dut.din[31:0]
+[color] 2
+tb_fifo.dut.dout[31:0]
+@24
+[color] 3
+tb_fifo.dut.rptr[1:0]
+[color] 3
+tb_fifo.dut.wptr[1:0]
+@28
+tb_fifo.dut.empty
+tb_fifo.dut.full
+tb_fifo.overflow
+@22
+tb_fifo.dut.\fifo[0][31:0]
+tb_fifo.dut.\fifo[1][31:0]
+tb_fifo.dut.\fifo[2][31:0]
+@23
+tb_fifo.dut.\fifo[3][31:0]
+[pattern_trace] 1
+[pattern_trace] 0

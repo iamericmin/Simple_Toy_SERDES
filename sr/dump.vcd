@@ -1,0 +1,278 @@
+$date
+	Thu May 28 12:30:46 2026
+$end
+$version
+	Icarus Verilog
+$end
+$timescale
+	1ps
+$end
+$scope module sr_tb $end
+$var wire 2 ! mode_enum [1:0] $end
+$var wire 8 " pout [7:0] $end
+$var parameter 32 # BITS $end
+$var reg 1 $ clk $end
+$var reg 1 % en $end
+$var reg 2 & mode [1:0] $end
+$var reg 1 ' n_rst $end
+$var reg 8 ( pin [7:0] $end
+$var reg 1 ) update $end
+$scope module dut $end
+$var wire 1 $ clk $end
+$var wire 1 % en $end
+$var wire 2 * mode [1:0] $end
+$var wire 1 ' n_rst $end
+$var wire 8 + pin [7:0] $end
+$var wire 1 ) update $end
+$var parameter 32 , BITS $end
+$var reg 8 - int_reg [7:0] $end
+$var reg 8 . n_pout [7:0] $end
+$var reg 8 / pout [7:0] $end
+$upscope $end
+$scope begin $ivl_for_loop2 $end
+$var integer 32 0 i [31:0] $end
+$upscope $end
+$scope begin $ivl_for_loop3 $end
+$var integer 32 1 i [31:0] $end
+$upscope $end
+$scope begin $ivl_for_loop4 $end
+$var integer 32 2 i [31:0] $end
+$upscope $end
+$scope task test_sr $end
+$var reg 2 3 test_mode [1:0] $end
+$var integer 32 4 clocks [31:0] $end
+$scope begin $ivl_for_loop0 $end
+$var integer 32 5 i [31:0] $end
+$upscope $end
+$scope begin $ivl_for_loop1 $end
+$var integer 32 6 i [31:0] $end
+$upscope $end
+$upscope $end
+$upscope $end
+$enddefinitions $end
+$comment Show the parameter values. $end
+$dumpall
+b1000 ,
+b1000 #
+$end
+#0
+$dumpvars
+b0 6
+b0 5
+b0 4
+bx 3
+b0 2
+b0 1
+b0 0
+b0 /
+b0 .
+b0 -
+bx +
+b11 *
+1)
+bx (
+0'
+b11 &
+1%
+0$
+b0 "
+b11 !
+$end
+#10000
+1$
+#20000
+0$
+#30000
+b1 "
+b1 /
+b11110000 -
+0)
+0%
+b11110000 (
+b11110000 +
+1'
+1$
+#40000
+0$
+#50000
+b11100000 -
+1)
+1$
+#60000
+0$
+#70000
+b11000000 -
+b1 0
+1$
+#80000
+0$
+#90000
+b10000000 -
+b10 0
+1$
+#100000
+0$
+#110000
+b0 "
+b0 /
+b0 -
+b11 0
+1$
+#120000
+0$
+#130000
+b100 0
+1$
+#140000
+0$
+#150000
+b101 0
+1$
+#160000
+0$
+#170000
+b110 0
+1$
+#180000
+0$
+#190000
+b1011010 -
+0)
+b1011010 (
+b1011010 +
+b111 0
+1$
+#200000
+0$
+#210000
+b1 "
+b1 /
+b10110100 -
+1)
+1$
+#220000
+0$
+#230000
+b0 "
+b0 /
+b1101000 -
+b1 1
+1$
+#240000
+0$
+#250000
+b1 "
+b1 /
+b11010000 -
+b10 1
+1$
+#260000
+0$
+#270000
+b10100000 -
+b11 1
+1$
+#280000
+0$
+#290000
+b0 "
+b0 /
+b1000000 -
+b100 1
+1$
+#300000
+0$
+#310000
+b1 "
+b1 /
+b10000000 -
+b101 1
+1$
+#320000
+0$
+#330000
+b0 "
+b0 /
+b0 -
+b110 1
+1$
+#340000
+0$
+#350000
+b1 "
+b1 /
+b10101010 -
+0)
+b10101010 (
+b10101010 +
+b111 1
+1$
+#360000
+0$
+#370000
+b0 "
+b0 /
+b1010100 -
+1)
+1$
+#380000
+0$
+#390000
+b1 "
+b1 /
+b10101000 -
+b1 2
+1$
+#400000
+0$
+#410000
+b0 "
+b0 /
+b1010000 -
+b10 2
+1$
+#420000
+0$
+#430000
+b1 "
+b1 /
+b10100000 -
+b11 2
+1$
+#440000
+0$
+#450000
+b0 "
+b0 /
+b1000000 -
+b100 2
+1$
+#460000
+0$
+#470000
+b1 "
+b1 /
+b10000000 -
+b101 2
+1$
+#480000
+0$
+#490000
+b0 "
+b0 /
+b0 -
+b110 2
+1$
+#500000
+0$
+#510000
+b111 2
+1$
+#520000
+0$
+#530000
+1$
+#540000
+0$
+#550000
+1$

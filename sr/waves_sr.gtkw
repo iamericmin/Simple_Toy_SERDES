@@ -1,0 +1,80 @@
+[*]
+[*] GTKWave Analyzer v3.3.125 (w)1999-2025 BSI
+[*] Sat May 23 19:06:35 2026
+[*]
+[dumpfile] "/home/iamericmin/Desktop/Min Works/chipdesign/sr/dump.vcd"
+[dumpfile_mtime] "Sat May 23 19:04:26 2026"
+[dumpfile_size] 3362
+[savefile] "/home/iamericmin/Desktop/Min Works/chipdesign/sr/waves_sr.gtkw"
+[timestart] 0
+[size] 1920 1052
+[pos] -1 -1
+*-16.799999 300000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[treeopen] sr_tb.
+[sst_width] 332
+[signals_width] 204
+[sst_expanded] 1
+[sst_vpaned_height] 314
+@420
+sr_tb.dut.BITS
+@28
+sr_tb.dut.n_rst
+sr_tb.dut.clk
+[color] 3
+sr_tb.dut.en
+[color] 2
+sr_tb.dut.int_reg[7:0]
+sr_tb.dut.mode[1:0]
+[color] 2
+sr_tb.dut.n_pout[7:0]
+@800028
+[color] 2
+sr_tb.dut.pin[7:0]
+@28
+[color] 2
+(0)sr_tb.dut.pin[7:0]
+[color] 2
+(1)sr_tb.dut.pin[7:0]
+[color] 2
+(2)sr_tb.dut.pin[7:0]
+@29
+[color] 2
+(3)sr_tb.dut.pin[7:0]
+@28
+[color] 2
+(4)sr_tb.dut.pin[7:0]
+[color] 2
+(5)sr_tb.dut.pin[7:0]
+[color] 2
+(6)sr_tb.dut.pin[7:0]
+[color] 2
+(7)sr_tb.dut.pin[7:0]
+@1001200
+-group_end
+@800028
+[color] 2
+sr_tb.dut.pout[7:0]
+@28
+[color] 2
+(0)sr_tb.dut.pout[7:0]
+[color] 2
+(1)sr_tb.dut.pout[7:0]
+[color] 2
+(2)sr_tb.dut.pout[7:0]
+[color] 2
+(3)sr_tb.dut.pout[7:0]
+[color] 2
+(4)sr_tb.dut.pout[7:0]
+[color] 2
+(5)sr_tb.dut.pout[7:0]
+[color] 2
+(6)sr_tb.dut.pout[7:0]
+[color] 2
+(7)sr_tb.dut.pout[7:0]
+@1001200
+-group_end
+@28
+[color] 3
+sr_tb.dut.update
+[pattern_trace] 1
+[pattern_trace] 0
