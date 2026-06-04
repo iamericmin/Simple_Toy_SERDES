@@ -1,13 +1,17 @@
 // Simple FWFT async fifo
 // Restricted to depths of powers of 2
 
+// FWFT behavior: oldest value already sitting on dout
+// On first instance of ren && rclk, second-oldest value gets clocked out
+
 module async_fifo #(
   parameter WIDTH = 16,
   parameter DEPTH = 4
 )(
   input logic rclk, // read clock
   input logic wclk, // write clock
-  input logic n_rst,
+  input logic r_rst, // read domain reset
+  input logic w_rst, // write domain reset
   input logic ren, // active low read enable
   input logic wen, // active low write enable
   input logic [WIDTH - 1:0] din, // data to write to fifo
@@ -42,8 +46,8 @@ module async_fifo #(
   assign full = (sync_g_rptr[POINTER_WIDTH:POINTER_WIDTH-1] == ~g_wptr[POINTER_WIDTH:POINTER_WIDTH-1]) && (sync_g_rptr[POINTER_WIDTH-2:0] == g_wptr[POINTER_WIDTH-2:0]);
 
   // write pointer handler
-  always_ff @(posedge wclk, negedge n_rst) begin
-    if (~n_rst) begin
+  always_ff @(posedge wclk, negedge w_rst) begin
+    if (~w_rst) begin
       b_wptr <= 0;
       g_wptr <= 0;
 
@@ -65,21 +69,21 @@ module async_fifo #(
   assign dout = fifo[b_rptr[POINTER_WIDTH - 1:0]];
 
   // read pointer handler
-  always_ff @(posedge rclk, negedge n_rst) begin
-    if (~n_rst) begin
+  always_ff @(posedge rclk, negedge r_rst) begin
+    if (~r_rst) begin
       b_rptr <= 0;
       g_rptr <= 0;
     end else begin
       if (~ren && ~empty) begin // if valid read condition
         b_rptr <= b_rptr + 1;
-        g_rptr <= b_rptr + 1 ^ (b_rptr + 1 >> 1);
+        g_rptr <= (b_rptr + 1) ^ ((b_rptr + 1) >> 1);
       end
     end
   end
 
   // 2FF sync for rptr
-  always_ff @(posedge wclk, negedge n_rst) begin
-    if (~n_rst) begin
+  always_ff @(posedge wclk, negedge w_rst) begin
+    if (~w_rst) begin
       sync_g_rptr_inter <= 0;
       sync_g_rptr <= 0;
     end else begin
@@ -89,8 +93,8 @@ module async_fifo #(
   end
 
   // 2FF sync for wptr
-  always_ff @(posedge rclk, negedge n_rst) begin
-    if (~n_rst) begin
+  always_ff @(posedge rclk, negedge r_rst) begin
+    if (~r_rst) begin
       sync_g_wptr_inter <= 0;
       sync_g_wptr <= 0;
     end else begin
