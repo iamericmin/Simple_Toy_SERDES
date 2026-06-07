@@ -45,22 +45,22 @@ module tb_async_fifo;
 
   initial begin
     wclk = 0;
-    wclk_half_period = $urandom_range(1, 25);
+    wclk_half_period = $urandom_range(1, 50);
     // wclk_half_period = 4ns;
     w_freq = (1.0 / (wclk_half_period * 2)) * 1000;
     forever begin
-      #(wclk_half_period * 1ns) wclk = ~wclk;
+      #(wclk_half_period + $urandom_range(10, 50)) wclk = ~wclk; // simulated jitter
     end
   end
 
   initial begin
     rclk = 0;
-    rclk_half_period = $urandom_range(1, 25);
+    rclk_half_period = $urandom_range(1, 50);
     // rclk_half_period = 3ns;
     r_freq = (1.0 / (rclk_half_period * 2)) * 1000;
     freq_ratio = r_freq / w_freq;
     forever begin
-      #(rclk_half_period * 1ns) rclk = ~rclk;
+      #(rclk_half_period + $urandom_range(10, 50)) rclk = ~rclk; // simulated jitter
     end
   end
 
@@ -118,8 +118,8 @@ module tb_async_fifo;
 
     // initialize input bitstreams
     for (int i=0; i<TEST_LEN; i++) begin
-      // bs_input[i] = 32'd100 + i;
-      bs_input[i] = $urandom();
+      bs_input[i] = 32'd0 + i;
+      // bs_input[i] = $urandom();
     end
 
     $dumpfile("dump.vcd");
@@ -181,7 +181,7 @@ module tb_async_fifo;
       $display("\033[0;32m"); 
       $display("\n********************************************************\n");
       $display("SUCCESS: All %0d bitstream elements matched perfectly!", TEST_LEN);
-      $display("RCLK: %.2fMHz / WCLK: %.2fMHZ", r_freq, w_freq);
+      $display("RCLK: %.4fMHz / WCLK: %.4fMHZ", r_freq, w_freq);
       $display("R/W clock ratio: %.4f", freq_ratio);
       $display("\n********************************************************\n");
       $display("\033[0m"); 
@@ -189,7 +189,7 @@ module tb_async_fifo;
       $display("\033[0;31m"); 
       $display("\n********************************************************\n");
       $display("FAILURE: %0d mismatches detected.", errors);
-      $display("RCLK: %.2fMHz / WCLK: %.2fMHZ", r_freq, w_freq);
+      $display("RCLK: %.4fMHz / WCLK: %.4fMHZ", r_freq, w_freq);
       $display("R/W clock ratio: %.4f", freq_ratio);
       $display("\n********************************************************\n");
       $display("\033[0m"); 
