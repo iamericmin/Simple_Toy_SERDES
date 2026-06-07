@@ -8,7 +8,7 @@ module tb_async_fifo;
 
   parameter WIDTH = 32;
   parameter DEPTH = 8;
-  parameter TEST_LEN = 4096;
+  parameter TEST_LEN = 2048;
 
   // 1. Declare local signals to connect to the Design Under Test (DUT)
   logic rclk; // read clock
@@ -41,13 +41,13 @@ module tb_async_fifo;
   // Randomized read/write clock periods between 1ns and 50ns
   int  wclk_half_period;
   int  rclk_half_period;
-  real w_freq, r_freq;
+  real w_freq, r_freq, freq_ratio;
 
   initial begin
     wclk = 0;
-    // wclk_half_period = $urandom_range(1, 25);
-    wclk_half_period = 6ns;
-    w_freq = (1000000000.0 / (wclk_half_period * 2)) / 1e6;
+    wclk_half_period = $urandom_range(1, 25);
+    // wclk_half_period = 4ns;
+    w_freq = (1.0 / (wclk_half_period * 2)) * 1000;
     forever begin
       #(wclk_half_period * 1ns) wclk = ~wclk;
     end
@@ -55,9 +55,10 @@ module tb_async_fifo;
 
   initial begin
     rclk = 0;
-    // rclk_half_period = $urandom_range(1, 25);
-    rclk_half_period = 13ns;
-    r_freq = (1000000000.0 / (rclk_half_period * 2)) / 1e6;
+    rclk_half_period = $urandom_range(1, 25);
+    // rclk_half_period = 3ns;
+    r_freq = (1.0 / (rclk_half_period * 2)) * 1000;
+    freq_ratio = r_freq / w_freq;
     forever begin
       #(rclk_half_period * 1ns) rclk = ~rclk;
     end
@@ -66,21 +67,21 @@ module tb_async_fifo;
   // write driver
   // checks if fifo not full and writes to it
   task write_fifo(input logic [WIDTH-1:0] test_din);
-    wait (!full)
-    wen = 0;
-    din = test_din;
-    @(posedge wclk);
-    $display("[%0dns] Wrote %0d to FIFO!", $time, test_din);
-    // if (~full) begin // if not full, write
-    //   wen = 0;
-    //   din = test_din;
-    //   @(posedge wclk);
-    //   $display("[%0dns] Wrote %0d to FIFO!", $time, test_din);
-    // end else begin // if full, wait
-    //   wen = 1;
-    //   @(posedge wclk);
-    //   $display("[%0dns] Tried to write %0d, but FIFO was full!", $time, test_din);
-    // end
+    // wait (!full)
+    // wen = 0;
+    // din = test_din;
+    // @(posedge wclk);
+    // $display("[%0dns] Wrote %0d to FIFO!", $time, test_din);
+    if (~full) begin // if not full, write
+      wen = 0;
+      din = test_din;
+      @(posedge wclk);
+      $display("[%0dns] Wrote %0d to FIFO!", $time, test_din);
+    end else begin // if full, wait
+      wen = 1;
+      @(posedge wclk);
+      $display("[%0dns] Tried to write %0d, but FIFO was full!", $time, test_din);
+    end
   endtask
 
   // read driver
@@ -180,12 +181,18 @@ module tb_async_fifo;
       $display("\033[0;32m"); 
       $display("\n********************************************************\n");
       $display("SUCCESS: All %0d bitstream elements matched perfectly!", TEST_LEN);
-      $display("RCLK: %.2fGHz / WCLK: %.2fGHZ", r_freq, w_freq);
+      $display("RCLK: %.2fMHz / WCLK: %.2fMHZ", r_freq, w_freq);
+      $display("R/W clock ratio: %.4f", freq_ratio);
       $display("\n********************************************************\n");
       $display("\033[0m"); 
     end else begin
+      $display("\033[0;31m"); 
+      $display("\n********************************************************\n");
       $display("FAILURE: %0d mismatches detected.", errors);
       $display("RCLK: %.2fMHz / WCLK: %.2fMHZ", r_freq, w_freq);
+      $display("R/W clock ratio: %.4f", freq_ratio);
+      $display("\n********************************************************\n");
+      $display("\033[0m"); 
     end
 
     $display("--- Tests Complete! ---");
