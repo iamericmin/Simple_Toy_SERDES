@@ -1,1 +1,1 @@
-iverilog -g2012 -o waves.vvp *.sv && vvp waves.vvp
+iverilog -g2012 -o waves.vvp *.sv && vvp waves.vvp +SEED=$(date +%s)

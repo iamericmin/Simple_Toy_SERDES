@@ -24,46 +24,82 @@ module tb_async_fifo;
 
   async_fifo #(WIDTH, DEPTH) dut (.*);
 
+  int seed;
+
+  initial begin
+    if (!$value$plusargs("SEED=%d", seed)) begin
+      seed = 32'h1; // fallback seed
+    end
+
+    $display("Using seed = %0d", seed);
+
+    void'($urandom(seed)); // <-- THIS is what actually seeds RNG
+  end
+
   // 3. Clock Generation
   // Generate two separate clocks for write and read
+  // Randomized read/write clock periods between 1ns and 50ns
+  int  wclk_half_period;
+  int  rclk_half_period;
+  real w_freq, r_freq;
+
   initial begin
     wclk = 0;
-    forever #7ns wclk = ~wclk;
+    // wclk_half_period = $urandom_range(1, 25);
+    wclk_half_period = 6ns;
+    w_freq = (1000000000.0 / (wclk_half_period * 2)) / 1e6;
+    forever begin
+      #(wclk_half_period * 1ns) wclk = ~wclk;
+    end
   end
 
   initial begin
     rclk = 0;
-    forever #13ns rclk = ~rclk;
+    // rclk_half_period = $urandom_range(1, 25);
+    rclk_half_period = 13ns;
+    r_freq = (1000000000.0 / (rclk_half_period * 2)) / 1e6;
+    forever begin
+      #(rclk_half_period * 1ns) rclk = ~rclk;
+    end
   end
 
   // write driver
   // checks if fifo not full and writes to it
   task write_fifo(input logic [WIDTH-1:0] test_din);
-    if (~full) begin // if not full, write
-      wen = 0;
-      din = test_din;
-      @(posedge wclk);
-      $display("[%dns] Wrote %d to FIFO!", $time, test_din);
-    end else begin // if full, wait
-      wen = 1;
-      @(posedge wclk);
-      $display("[%dns] Tried to write %d, but FIFO was full!", $time, test_din);
-    end
+    wait (!full)
+    wen = 0;
+    din = test_din;
+    @(posedge wclk);
+    $display("[%0dns] Wrote %0d to FIFO!", $time, test_din);
+    // if (~full) begin // if not full, write
+    //   wen = 0;
+    //   din = test_din;
+    //   @(posedge wclk);
+    //   $display("[%0dns] Wrote %0d to FIFO!", $time, test_din);
+    // end else begin // if full, wait
+    //   wen = 1;
+    //   @(posedge wclk);
+    //   $display("[%0dns] Tried to write %0d, but FIFO was full!", $time, test_din);
+    // end
   endtask
 
   // read driver
   // checks if fifo not empty and reads from it
   task read_fifo(output logic [WIDTH-1:0] test_dout);
     wait (!empty);
+    ren = 0;
+    @(posedge rclk);
+    test_dout = dout;
+    $display("[%0dns] Read %0d from FIFO!", $time, test_dout);
     // if (~empty) begin // if not empty, read
-      ren = 0;
-      @(posedge rclk);
-      test_dout = dout;
-      $display("[%dns] Read %D from FIFO!", $time, test_dout);
+    //   ren = 0;
+    //   @(posedge rclk);
+    //   test_dout = dout;
+    //   $display("[%0dns] Read %0d from FIFO!", $time, test_dout);
     // end else begin // if empty, wait
     //   ren = 1;
     //   @(posedge rclk);
-    //   $display("[%dns] Tried to read %d, but FIFO was empty!", $time, test_dout);
+    //   $display("[%0dns] Tried to read %0d, but FIFO was empty!", $time, test_dout);
     // end
   endtask
 
@@ -105,12 +141,6 @@ module tb_async_fifo;
     w_rst = 1;
     $display("--- Starting async FIFO Tests ---");
 
-    test_data = 32'd100;
-
-    // for (int i=0; i<TEST_LEN; i++) begin
-    //   write_fifo(bs_input[i]);
-    // end
-
     fork
       // Thread 1: Continuous Write Loop
       begin
@@ -129,8 +159,7 @@ module tb_async_fifo;
         int r_idx = 0;
         logic [WIDTH-1:0] read_data;
         while(r_idx < TEST_LEN) begin
-          read_fifo(read_data);
-          bs_output[r_idx] = read_data;
+          read_fifo(bs_output[r_idx]);
           if (~empty) begin
             r_idx = r_idx + 1;
           end
@@ -142,15 +171,21 @@ module tb_async_fifo;
     $display("--- Analyzing Results ---");
     for (int i = 0; i < TEST_LEN; i++) begin
       if (bs_input[i] !== bs_output[i]) begin
-        $display("ERROR at index %0d: Expected %d, Got %d", i, bs_input[i], bs_output[i]);
+        $display("ERROR at index %0d: Expected %0d, Got %0d", i, bs_input[i], bs_output[i]);
         errors++;
       end
     end
 
     if (errors == 0) begin
-      $display("SUCCESS: All TEST_LEN bitstream elements matched perfectly!");
+      $display("\033[0;32m"); 
+      $display("\n********************************************************\n");
+      $display("SUCCESS: All %0d bitstream elements matched perfectly!", TEST_LEN);
+      $display("RCLK: %.2fGHz / WCLK: %.2fGHZ", r_freq, w_freq);
+      $display("\n********************************************************\n");
+      $display("\033[0m"); 
     end else begin
       $display("FAILURE: %0d mismatches detected.", errors);
+      $display("RCLK: %.2fMHz / WCLK: %.2fMHZ", r_freq, w_freq);
     end
 
     $display("--- Tests Complete! ---");
