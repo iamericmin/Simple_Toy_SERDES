@@ -8,7 +8,7 @@ module tb_async_fifo;
 
   parameter WIDTH = 32;
   parameter DEPTH = 8;
-  parameter TEST_LEN = 32;
+  parameter TEST_LEN = 4096;
 
   // 1. Declare local signals to connect to the Design Under Test (DUT)
   logic rclk; // read clock
@@ -28,7 +28,7 @@ module tb_async_fifo;
   // Generate two separate clocks for write and read
   initial begin
     wclk = 0;
-    forever #3ns wclk = ~wclk;
+    forever #7ns wclk = ~wclk;
   end
 
   initial begin
@@ -54,16 +54,17 @@ module tb_async_fifo;
   // read driver
   // checks if fifo not empty and reads from it
   task read_fifo(output logic [WIDTH-1:0] test_dout);
-    if (~empty) begin // if not empty, read
+    wait (!empty);
+    // if (~empty) begin // if not empty, read
       ren = 0;
+      @(posedge rclk);
       test_dout = dout;
-      @(posedge rclk);
       $display("[%dns] Read %D from FIFO!", $time, test_dout);
-    end else begin // if empty, wait
-      ren = 1;
-      @(posedge rclk);
-      $display("[%dns] Tried to read %d, but FIFO was empty!", $time, test_dout);
-    end
+    // end else begin // if empty, wait
+    //   ren = 1;
+    //   @(posedge rclk);
+    //   $display("[%dns] Tried to read %d, but FIFO was empty!", $time, test_dout);
+    // end
   endtask
 
 // 4. Stimulus Generation
@@ -75,13 +76,13 @@ module tb_async_fifo;
     logic [WIDTH-1:0] bs_output [TEST_LEN]; // FIFO output
     int errors = 0;
     
-
     int random_w_delay;
     int random_r_delay;
 
     // initialize input bitstreams
     for (int i=0; i<TEST_LEN; i++) begin
-      bs_input[i] = 32'h0000_0000 + i;
+      // bs_input[i] = 32'd100 + i;
+      bs_input[i] = $urandom();
     end
 
     $dumpfile("dump.vcd");
@@ -98,8 +99,8 @@ module tb_async_fifo;
     din   = 0;
 
     // Wait for slower read clock
-    @(posedge rclk);
-    @(posedge wclk);
+    repeat(3) @(posedge rclk);
+    repeat(3) @(posedge wclk);
     r_rst = 1;
     w_rst = 1;
     $display("--- Starting async FIFO Tests ---");
@@ -129,8 +130,8 @@ module tb_async_fifo;
         logic [WIDTH-1:0] read_data;
         while(r_idx < TEST_LEN) begin
           read_fifo(read_data);
+          bs_output[r_idx] = read_data;
           if (~empty) begin
-            bs_output[r_idx] = read_data;
             r_idx = r_idx + 1;
           end
         end

@@ -1,9 +1,6 @@
 // Simple async fifo
 // Restricted to depths of powers of 2
 
-// FWFT behavior: oldest value already sitting on dout
-// On first instance of ren && rclk, second-oldest value gets clocked out
-
 module async_fifo #(
   parameter WIDTH = 16,
   parameter DEPTH = 4
@@ -38,23 +35,31 @@ module async_fifo #(
   logic [POINTER_WIDTH:0] sync_g_wptr_inter; // intermediary signal in 2FF (Danger Zone!)
   logic [POINTER_WIDTH:0] sync_g_rptr_inter; // intermediary signal in 2FF (Danger Zone!)
 
-  // empty flag asserted when synchronized write pointer equals read pointer
-  assign empty = (sync_g_wptr == g_rptr);
+  logic [POINTER_WIDTH:0] n_b_wptr, n_g_wptr;
+  logic [POINTER_WIDTH:0] n_b_rptr, n_g_rptr;
 
-  // full flag asserted when top two MSB of write pointer is the inverse of the top two MSB of read pointer
-  // and if the rest of both are the same
-  assign full = (sync_g_rptr[POINTER_WIDTH:POINTER_WIDTH-1] == ~g_wptr[POINTER_WIDTH:POINTER_WIDTH-1]) && (sync_g_rptr[POINTER_WIDTH-2:0] == g_wptr[POINTER_WIDTH-2:0]);
+  assign n_b_wptr = b_wptr + (~wen && ~full);
+  assign n_g_wptr = n_b_wptr ^ (n_b_wptr >> 1);
+
+  assign n_b_rptr = b_rptr + (~ren && ~empty);
+  assign n_g_rptr = n_b_rptr ^ (n_b_rptr >> 1);
+
+  logic n_full, n_empty;
+
+  assign n_empty = (sync_g_wptr == n_g_rptr);
+  assign n_full = (sync_g_rptr[POINTER_WIDTH:POINTER_WIDTH-1] == ~n_g_wptr[POINTER_WIDTH:POINTER_WIDTH-1]) && (sync_g_rptr[POINTER_WIDTH-2:0] == n_g_wptr[POINTER_WIDTH-2:0]);
 
   // write pointer handler
   always_ff @(posedge wclk, negedge w_rst) begin
     if (~w_rst) begin
       b_wptr <= 0;
       g_wptr <= 0;
+      full <= 0;
     end else begin
+      b_wptr <= n_b_wptr;
+      g_wptr <= n_g_wptr;
+      full <= n_full;
       if (~wen && ~full) begin // if valid write condition
-        // truncate write pointer to proper bit width
-        b_wptr <= b_wptr + 1;
-        g_wptr <= (b_wptr + 1) ^ ((b_wptr + 1) >> 1); // added 1 to b_wptr to account for non-blocking assignment
         fifo[b_wptr[POINTER_WIDTH - 1:0]] <= din;
       end
     end
@@ -67,11 +72,11 @@ module async_fifo #(
     if (~r_rst) begin
       b_rptr <= 0;
       g_rptr <= 0;
+      empty <= 1;
     end else begin
-      if (~ren && ~empty) begin // if valid read condition
-        b_rptr <= b_rptr + 1;
-        g_rptr <= (b_rptr + 1) ^ ((b_rptr + 1) >> 1);
-      end
+      b_rptr <= n_b_rptr;
+      g_rptr <= n_g_rptr;
+      empty <= n_empty;
     end
   end
 
